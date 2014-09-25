@@ -306,6 +306,9 @@
                 <div class="chip-bottom">
                   <div class="friend-mini-name">{{item.name}}</div>
                   <div class="friend-mini-location">Last seen at {{item.last_seen_at}}</div>
+                  <template bind if="{{item.message}}">
+                    <core-icon src="chat.png"></core-icon>
+                  </template>
                 </div>
               </div>
             </template>
