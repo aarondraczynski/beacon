@@ -3,6 +3,7 @@
 <head>
   <title>Live Nation</title>
 
+  <script src="https://cdn.firebase.com/js/client/1.0.24/firebase.js"></script>
   <script src="components/platform/platform.js"></script>
   <link href="components/core-animated-pages/core-animated-pages.html" rel="import">
   <link href="components/core-header-panel/core-header-panel.html" rel="import">
@@ -198,18 +199,54 @@
     </core-animated-pages>
 
   </template>
-  <script>
+  <script>  
 
-    Polymer('friend-finder', {
+    var fireBeacon = new Firebase("https://burning-torch-5648.firebaseio.com/");
+    var beconUsers = fireBeacon.child("users");
+    var currentUser = beconUsers.push();
+    var connectedRef = new Firebase("https://burning-torch-5648.firebaseio.com//.info/connected");
+    var currLocation; 
 
-      page: 0,
+    connectedRef.on("value", function(isOnline) {
+      if (isOnline.val()) {
+        // If we lose our internet connection, we want ourselves removed from the list.
+        currentUser.onDisconnect().remove();
+      }
+    });
 
-      items: [
+    var items = [
         { id: 'nickvlku', name: 'Nick Vlku', last_seen_at: 'front bar', last_seen_time: '3 minutes ago', message: 'Waiting by the exit door', profile_image: 'http://i.imgur.com/Nepsevb.jpg' },
         { id: 'akshaydodeja', name: 'Akshay Dodeja', last_seen_at: 'seat 25D', last_seen_time: '2 minutes ago', message: 'Seated and ready...', profile_image: 'http://i.imgur.com/REKhkoH.jpg' },
         { id: 'jonkantro', name: 'Jon Kantrowitz', last_seen_at: 'east lobby', last_seen_time: '5 minutes ago', message: 'Standing next to the pole', profile_image: 'http://i.imgur.com/f9itLTh.jpg' },
         { id: 'wesdonohoe', name: 'Wesley Donohoe', last_seen_at: 'mezzanine', last_seen_time: '2 minutes ago', message: 'Chilling by the window', profile_image: 'http://i.imgur.com/VhIh8ib.jpg' }
-      ],
+      ]; 
+
+    var getLocation = function () {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(setLocation);
+      } else {
+        console.error("browser location not supported");
+      }
+    };
+
+    var setLocation = function(loc) {
+     currLocation = loc; 
+    };
+
+    var setUser = function(nane, note) {
+      currentUser.set({
+        name: name, 
+        note: note,
+        location: currLocation.coords
+      });
+    };
+
+    // Polymer stuffs 
+    Polymer('friend-finder', {
+
+      page: 0,
+
+      items: items,
 
       selectedFriend: null,
 
@@ -222,6 +259,8 @@
         }
       }
     });
+
+    getLocation();
 
   </script>
   </polymer-element>
