@@ -1,1 +1,1 @@
-user interface for an in-venue human locator for iBeacon-compatible mobile devices
+Prototype of a mobile app for finding your friends at a concert venue using iBeacon proximity sensors.

@@ -7,17 +7,68 @@
   <link href="components/core-animated-pages/core-animated-pages.html" rel="import">
   <link href="components/core-header-panel/core-header-panel.html" rel="import">
   <link href="components/core-toolbar/core-toolbar.html" rel="import">
+  <link href="components/core-dropdown/core-dropdown.html" rel="import">
+  <link href="components/core-overlay/core-overlay.html" rel="import">
+  <link href="components/core-icons/core-icons.html" rel="import">
   <link href="components/paper-tabs/paper-tabs.html" rel="import">
   <link href="components/paper-shadow/paper-shadow.html" rel="import">
-  <link href="components/paper-button/paper-button.html" rel="import" >
-  <link href="components/core-icons/core-icons.html" rel="import">
+  <link href="components/paper-button/paper-button.html" rel="import">
+  <link href="components/paper-fab/paper-fab.html" rel="import">
+  <link href="components/paper-dialog/paper-dialog-transition.html" rel="import">
+  <link href="components/paper-dialog/paper-dialog.html" rel="import">
+  <link href="components/paper-input/paper-input.html" rel="import">
   <link href="components/paper-icon-button/paper-icon-button.html" rel="import">
+  <link href="components/paper-menu-button/paper-menu-button.html" rel="import">
+  <link href="components/paper-checkbox/paper-checkbox.html" rel="import">
 
   <style>
-    body {
-      font-family: 'Avenir Next', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    body {font-family: 'Avenir Next', 'Helvetica Neue', Helvetica, Arial, sans-serif;
       margin: 0;
       background: #f1f1f1;
+    }
+
+    core-header-panel, core-toolbar {
+      position: relative;
+    }
+
+    paper-dialog {
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #container {
+      max-width: none;
+      max-height: none;
+      width: 100%;
+      height: 100%;
+    }
+
+    paper-dialog p {
+      margin-top: 0;
+      font-size: 16px !important;
+      font-weight: 600 !important;
+    }
+
+    paper-dialog paper-input {
+      width: 100%;
+    }
+
+    paper-dialog paper-button {
+      padding: 3px 10px 1px;
+      margin: 0 7px;
+      background: #fff;
+      border: 1px solid #aaa;
+      font-weight: 600;
+      color: #aaa;
+    }
+
+    paper-dialog paper-button.blue {
+      border: 0 none;
+      background: #5677fc;
+      font-weight: 600;
+      color: #fff;
     }
   </style>
 </head>
@@ -56,17 +107,81 @@
         text-transform: uppercase;
       }
 
+      #view-main {
+        position: relative;
+      }
+
+      #settings-dropdown-toggle {
+        margin: 0;
+      }
+
+      #settings-dropdown {
+        width: 180px;
+      }
+
+      paper-fab {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        background: #e11d39;
+        color: #fff;
+      }
+
+      paper-fab.blue {
+        background: #5677fc;
+      }
+
+      core-dropdown {
+        position: absolute;
+        overflow: auto;
+      }
+
+      paper-menu-button {
+        display: inline-block;
+        padding: 8px;
+        position: relative;
+      }
+
+      paper-menu-button div {
+        padding: 0 15px;
+        font-size: 16px;
+        color: #000;
+      }
+
+      paper-checkbox {
+        margin-right: 6px;
+        vertical-align: top;
+      }
+
+      paper-checkbox::shadow #ink {
+        color: #5677fc;
+      }
+
+      paper-checkbox::shadow #ink[checked] {
+        color: #5677fc;
+      }
+
+      paper-checkbox::shadow #checkbox,
+      paper-checkbox::shadow #checkbox.checked {
+        border-color: #5677fc;
+      }
+
       .photo-big {
         width: 100%;
         height: 320px;
         margin: 0;
       }
 
-      .chip-container {
-        position: absolute;
-        top: 30px;
-        right: 0;
-        left: 0;
+      #friends-map {
+        padding: 120px 0 0;
+        background: #ccc;
+        height: 130px;
+        text-align: center;
+        color: #aaa;
+      }
+
+      #friends-list {
+        margin: 12px 0 0;
         text-align: center;
       }
 
@@ -150,14 +265,16 @@
     </style>
 
     <core-animated-pages selected="{{page}}" transitions="hero-transition" on-core-animated-pages-transition-end="{{complete}}">
-      <section>
+      <section id="view-main">
         <core-header-panel>
           <core-toolbar class="medium-tall">
-            <paper-icon-button id="navicon" icon="menu" onclick="document.querySelector('#toast1').show()"></paper-icon-button>
+            <paper-icon-button id="navicon" icon="menu"></paper-icon-button>
 
             <span flex>Find friends</span>
 
-            <paper-icon-button id="morebutton" icon="more-vert" onclick="document.querySelector('#toast1').show()"></paper-icon-button>
+            <paper-menu-button icon="more-vert" halign="right" valign="bottom">
+              <div><paper-checkbox></paper-checkbox> Hide my location</div>
+            </paper-menu-button>
 
             <paper-tabs class="bottom fit" selected="0">
               <paper-tab>Who's here</paper-tab>
@@ -165,7 +282,12 @@
             </paper-tabs>
           </core-toolbar>
 
-          <div class="chip-container" hero-p on-tap="{{transition}}">
+          <div id="friends-map">
+            <!-- Map goes here -->
+            Map
+          </div>
+
+          <div id="friends-list" hero-p on-tap="{{transition}}">
             <template repeat="{{items as item}}">
               <div class="chip" hero-id="{{item.id}}" hero?="{{selectedFriend === item }}">
                 <div class="chip-top photo" style="background-image: url({{item.profile_image}});" hero-id="{{item.id}}-photo" hero?="{{selectedFriend === item}}"></div>
@@ -177,20 +299,24 @@
             </template>
           </div>
         </core-header-panel>
+
+        <paper-fab icon="create" class="blue" onclick="toggleDialog('paper-dialog-transition-bottom')"></paper-fab>
       </section>
 
-      <section id="details">
-        <div hero-p>
-          <div class="photo photo-big" style="background-image: url({{selectedFriend.profile_image}});" hero-id="{{selectedFriend.id}}-photo" hero></div>
-        </div>
+      <section id="view-details">
+        <div hero-id="{{selectedFriend.id}}" hero on-tap="{{transition}}">
+          <div hero-p>
+            <div class="photo photo-big" style="background-image: url({{selectedFriend.profile_image}});" hero-id="{{selectedFriend.id}}-photo" hero></div>
+          </div>
 
-        <div class="card" layout vertical hero-id="{{selectedFriend.id}}" hero on-tap="{{transition}}">
-          <div layout horizontal center>
-            <div flex>
-              <h1 class="friend-detail-name">{{selectedFriend.name}}</h1>
-              <h2 class="friend-detail-location">Last seen at {{selectedFriend.last_seen_at}} {{selectedFriend.last_seen_time}}</h2>
-              <p class="friend-detail-message">"{{selectedFriend.message}}"</p>
-              <paper-button class="button-message" label="button">Send Message</paper-button>
+          <div class="card" layout vertical>
+            <div layout horizontal center>
+              <div flex>
+                <h1 class="friend-detail-name">{{selectedFriend.name}}</h1>
+                <h2 class="friend-detail-location">Last seen at {{selectedFriend.last_seen_at}} {{selectedFriend.last_seen_time}}</h2>
+                <p class="friend-detail-message">"{{selectedFriend.message}}"</p>
+                <paper-button class="button-message" label="button">Send Message</paper-button>
+              </div>
             </div>
           </div>
         </div>
@@ -222,10 +348,24 @@
         }
       }
     });
-
   </script>
   </polymer-element>
 
   <friend-finder></friend-finder>
+
+  <paper-dialog autoCloseDisabled="true" transition="paper-dialog-transition-bottom" style="width: 100%; height: 100%">
+    <p>Write a short note to help your friends find you.</p>
+    <paper-input label="Standing near the speaker!"></paper-input>
+    <paper-button icon="close" dismissive></paper-button>
+    <paper-button icon="send" affirmative class="blue"></paper-button>
+  </paper-dialog>
+
+  <script>
+    function toggleDialog(transition) {
+      var dialog = document.querySelector('paper-dialog[transition=' + transition + ']');
+      dialog.toggle();
+    }
+  </script>
+  <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> -->
 </body>
 </html>
