@@ -353,13 +353,10 @@
       }
     });
 
-    beconUsers.on("child_added", function(snapshot) {
-      var user = snapshot.val();
-      if (currentUser.name() !== snapshot.name()){
-        items.push({id: snapshot.name(), name: user.name, message: user.note});
-      }
-      
-    });
+
+    // beconUsers.on("child_removed", function(snapshot) {
+    //   console.log(snapshot.name())      
+    // });
 
     var items = [
         { id: 'nickvlku', name: 'Nick Vlku', last_seen_at: 'front bar', last_seen_time: '3 minutes ago', message: 'Waiting by the exit door', profile_image: 'http://i.imgur.com/Nepsevb.jpg' },
@@ -367,6 +364,21 @@
         { id: 'jonkantro', name: 'Jon Kantrowitz', last_seen_at: 'east lobby', last_seen_time: '5 minutes ago', message: 'Standing next to the pole', profile_image: 'http://i.imgur.com/f9itLTh.jpg' },
         { id: 'wesdonohoe', name: 'Wesley Donohoe', last_seen_at: 'mezzanine', last_seen_time: '2 minutes ago', message: 'Chilling by the window', profile_image: 'http://i.imgur.com/VhIh8ib.jpg' }
       ]; 
+
+
+    beconUsers.on("child_added", function(snapshot) {
+      var user = snapshot.val();
+      if (currentUser.name() !== snapshot.name()){
+        items.push({id: snapshot.name(), name: user.name, message: user.note});
+      }
+    });
+
+
+    beconUsers.on("child_removed", function(snapshot) {
+      var userId = snapshot.name();
+      var index = items.map(function(e) { return e.id; }).indexOf(userId);
+      items.splice(index, 1);
+    });
 
     var getLocation = function () {
       if (navigator.geolocation) {
@@ -378,7 +390,7 @@
 
     var setLocation = function(loc) {
       currLocation = loc; 
-      geoQuery = geoFire.query({
+      geoQuery = geoBeacon.query({
         center: [loc.coords.latitude, loc.coords.longitude],
         radius: 10.0
       });
