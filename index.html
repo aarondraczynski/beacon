@@ -490,11 +490,12 @@
       'http://www.reactionface.info/sites/default/files/imagecache/Node_Page/images/1314029520391.jpg'
     ];
 
-    $(document).on('click', '#user-info-submit', function() {
+    $("#user-info-submit").click(function() {
+      console.log('user info clicked');
       setUser($('#user-name-input')[0].inputValue, null, randomImages[Math.floor(Math.random() * randomImages.length)]);
     });
 
-    $(document).on('click', '#user-note-submit', function() {
+    $("#user-note-submit").click(function() {
       setNote($('#user-note-input')[0].inputValue);
     });
   </script>
