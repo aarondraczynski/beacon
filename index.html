@@ -204,7 +204,7 @@
     var fireBeacon = new Firebase("https://burning-torch-5648.firebaseio.com/");
     var beconUsers = fireBeacon.child("users");
     var currentUser = beconUsers.push();
-    var connectedRef = new Firebase("https://burning-torch-5648.firebaseio.com//.info/connected");
+    var connectedRef = new Firebase("https://burning-torch-5648.firebaseio.com/.info/connected");
     var currLocation; 
 
     connectedRef.on("value", function(isOnline) {
@@ -212,6 +212,14 @@
         // If we lose our internet connection, we want ourselves removed from the list.
         currentUser.onDisconnect().remove();
       }
+    });
+
+    beconUsers.on("child_added", function(snapshot) {
+      var user = snapshot.val();
+      if (currentUser.name() !== snapshot.name()){
+        items.push({id: snapshot.name(), name: user.name, message: user.note});
+      }
+      
     });
 
     var items = [
@@ -233,11 +241,11 @@
      currLocation = loc; 
     };
 
-    var setUser = function(nane, note) {
+    var setUser = function(name, note) {
       currentUser.set({
         name: name, 
         note: note,
-        location: currLocation.coords
+        location: currLocation
       });
     };
 
