@@ -322,7 +322,7 @@
               <div flex>
                 <h1 class="friend-detail-name">{{selectedFriend.name}}</h1>
                 <h2 class="friend-detail-location">Last seen at: {{selectedFriend.last_seen_at}} {{selectedFriend.last_seen_time}}</h2>
-                <p class="friend-detail-message">"{{selectedFriend.message}}"</p>
+                <template bind if="{{selectedFriend.message}}"><p class="friend-detail-message">"{{selectedFriend.message}}"</p></template>
                 <paper-button class="button-message" label="button">Send Message</paper-button>
               </div>
             </div>
