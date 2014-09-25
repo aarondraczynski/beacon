@@ -3,6 +3,7 @@
 <head>
   <title>Live Nation</title>
 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="rsvp.min.js"></script>
   <script src="https://cdn.firebase.com/js/client/1.0.24/firebase.js"></script>
   <script src="https://cdn.firebase.com/libs/geofire/3.0.2/geofire.min.js"></script>
@@ -26,7 +27,8 @@
   <link href="components/paper-checkbox/paper-checkbox.html" rel="import">
 
   <style>
-    body {font-family: 'Avenir Next', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    body {
+      font-family: 'Avenir Next', 'Helvetica Neue', Helvetica, Arial, sans-serif;
       margin: 0;
       background: #f1f1f1;
     }
@@ -469,7 +471,7 @@
     }
 
     $(document).on('click', '#user-info-submit', function() {
-      setUser($('#user-name-input')[0].inputValue, '');
+      setUser($('#user-name-input')[0].inputValue, null);
     });
 
     $(document).on('click', '#user-note-submit', function() {
