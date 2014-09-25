@@ -1,2 +1,1 @@
-beacon
-======
+user interface for an in-venue human locator for iBeacon-compatible mobile devices

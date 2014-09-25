@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Nation</title>
+
+  <script src="components/platform/platform.js"></script>
+  <link href="components/core-animated-pages/core-animated-pages.html" rel="import">
+  <link href="components/core-header-panel/core-header-panel.html" rel="import">
+  <link href="components/core-toolbar/core-toolbar.html" rel="import">
+  <link href="components/paper-tabs/paper-tabs.html" rel="import">
+  <link href="components/paper-shadow/paper-shadow.html" rel="import">
+  <link href="components/paper-button/paper-button.html" rel="import" >
+  <link href="components/core-icons/core-icons.html" rel="import">
+  <link href="components/paper-icon-button/paper-icon-button.html" rel="import">
+
+  <style>
+    body {
+      font-family: 'Avenir Next', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      margin: 0;
+      background: #f1f1f1;
+    }
+  </style>
+</head>
+<body fullbleed unresolved>
+
+  <polymer-element name="friend-finder">
+  <template>
+
+    <style>
+      html {
+        box-sizing: border-box;
+      }
+
+      *, *:before, *:after {
+        box-sizing: inherit;
+      }
+
+      core-header-panel {
+        background: white;
+        /* height: 100% fails here on some browsers */
+        height: 100vh;
+        width: 100vw;
+      }
+
+      core-toolbar {
+        background-color: #e11d39;
+        color: #fff;
+      }
+
+      paper-tabs {
+        background-color: #fff;
+      }
+
+      paper-tab {
+        color: #000;
+        text-transform: uppercase;
+      }
+
+      .photo-big {
+        width: 100%;
+        height: 320px;
+        margin: 0;
+      }
+
+      .chip-container {
+        position: absolute;
+        top: 30px;
+        right: 0;
+        left: 0;
+        text-align: center;
+      }
+
+      .chip {
+        display: inline-block;
+        position: relative;
+        border-radius: 3px;
+        margin: 6px;
+        overflow: hidden;
+        text-align: start;
+        background-color: #fff;
+        box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2);
+      }
+
+      .chip-top {
+        width: 180px;
+        height: 180px;
+      }
+
+      .chip-bottom {
+        padding: 8px 12px;
+        line-height: 1.5;
+      }
+
+      .friend-mini-name {
+        font-weight: 700;
+      }
+
+      .friend-mini-location {
+        font-size: 13px;
+        color: #777;
+      }
+
+      .card {
+        position: absolute;
+        top: 250px;
+        width: 100%;
+        height: 400px;
+        margin: 0;
+        border-radius: 3px;
+        text-align: start;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      }
+
+      .friend-detail-name {
+        margin: 15px 15px 3px;
+        font-size: 26px;
+        font-weight: 700;
+      }
+
+      .friend-detail-location {
+        margin: 0 15px 20px;
+        font-size: 16px;
+        font-weight: normal;
+      }
+
+      .friend-detail-message {
+        padding: 20px;
+        margin: 0 15px 15px;
+        border-radius: 6px;
+        background-color: #eee;
+        font-size: 22px;
+        font-style: italic;
+        color: #777;
+      }
+
+      .button-message {
+        padding: 3px 10px 1px;
+        margin: 0 15px;
+        background: #e11d39;
+        font-weight: 600;
+        color: #fff;
+      }
+
+      .photo {
+        background-repeat: none;
+        background-size: cover;
+      }
+    </style>
+
+    <core-animated-pages selected="{{page}}" transitions="hero-transition" on-core-animated-pages-transition-end="{{complete}}">
+      <section>
+        <core-header-panel>
+          <core-toolbar class="medium-tall">
+            <paper-icon-button id="navicon" icon="menu" onclick="document.querySelector('#toast1').show()"></paper-icon-button>
+
+            <span flex>Find friends</span>
+
+            <paper-icon-button id="morebutton" icon="more-vert" onclick="document.querySelector('#toast1').show()"></paper-icon-button>
+
+            <paper-tabs class="bottom fit" selected="0">
+              <paper-tab>Who's here</paper-tab>
+              <paper-tab>Who RSVP'd</paper-tab>
+            </paper-tabs>
+          </core-toolbar>
+
+          <div class="chip-container" hero-p on-tap="{{transition}}">
+            <template repeat="{{items as item}}">
+              <div class="chip" hero-id="{{item.id}}" hero?="{{selectedFriend === item }}">
+                <div class="chip-top photo" style="background-image: url({{item.profile_image}});" hero-id="{{item.id}}-photo" hero?="{{selectedFriend === item}}"></div>
+                <div class="chip-bottom">
+                  <div class="friend-mini-name">{{item.name}}</div>
+                  <div class="friend-mini-location">Last seen at {{item.last_seen_at}}</div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </core-header-panel>
+      </section>
+
+      <section id="details">
+        <div hero-p>
+          <div class="photo photo-big" style="background-image: url({{selectedFriend.profile_image}});" hero-id="{{selectedFriend.id}}-photo" hero></div>
+        </div>
+
+        <div class="card" layout vertical hero-id="{{selectedFriend.id}}" hero on-tap="{{transition}}">
+          <div layout horizontal center>
+            <div flex>
+              <h1 class="friend-detail-name">{{selectedFriend.name}}</h1>
+              <h2 class="friend-detail-location">Last seen at {{selectedFriend.last_seen_at}} {{selectedFriend.last_seen_time}}</h2>
+              <p class="friend-detail-message">"{{selectedFriend.message}}"</p>
+              <paper-button class="button-message" label="button">Send Message</paper-button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </core-animated-pages>
+
+  </template>
+  <script>
+
+    Polymer('friend-finder', {
+
+      page: 0,
+
+      items: [
+        { id: 'nickvlku', name: 'Nick Vlku', last_seen_at: 'front bar', last_seen_time: '3 minutes ago', message: 'Waiting by the exit door', profile_image: 'http://i.imgur.com/Nepsevb.jpg' },
+        { id: 'akshaydodeja', name: 'Akshay Dodeja', last_seen_at: 'seat 25D', last_seen_time: '2 minutes ago', message: 'Seated and ready...', profile_image: 'http://i.imgur.com/REKhkoH.jpg' },
+        { id: 'jonkantro', name: 'Jon Kantrowitz', last_seen_at: 'east lobby', last_seen_time: '5 minutes ago', message: 'Standing next to the pole', profile_image: 'http://i.imgur.com/f9itLTh.jpg' },
+        { id: 'wesdonohoe', name: 'Wesley Donohoe', last_seen_at: 'mezzanine', last_seen_time: '2 minutes ago', message: 'Chilling by the window', profile_image: 'http://i.imgur.com/VhIh8ib.jpg' }
+      ],
+
+      selectedFriend: null,
+
+      transition: function(e) {
+        if (this.page === 0 && e.target.templateInstance.model.item) {
+          this.selectedFriend = e.target.templateInstance.model.item;
+          this.page = 1;
+        } else {
+          this.page = 0;
+        }
+      }
+    });
+
+  </script>
+  </polymer-element>
+
+  <friend-finder></friend-finder>
+</body>
+</html>
