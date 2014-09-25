@@ -3,7 +3,9 @@
 <head>
   <title>Live Nation</title>
 
+  <script src="rsvp.min.js"></script>
   <script src="https://cdn.firebase.com/js/client/1.0.24/firebase.js"></script>
+  <script src="https://cdn.firebase.com/libs/geofire/3.0.2/geofire.min.js"></script>
   <script src="components/platform/platform.js"></script>
   <link href="components/core-animated-pages/core-animated-pages.html" rel="import">
   <link href="components/core-header-panel/core-header-panel.html" rel="import">
@@ -330,14 +332,25 @@
     var fireBeacon = new Firebase("https://burning-torch-5648.firebaseio.com/");
     var beconUsers = fireBeacon.child("users");
     var currentUser = beconUsers.push();
-    var connectedRef = new Firebase("https://burning-torch-5648.firebaseio.com//.info/connected");
+    var connectedRef = new Firebase("https://burning-torch-5648.firebaseio.com/.info/connected");
+    var geoBeacon = new GeoFire(fireBeacon);
     var currLocation; 
+    var geoQuery 
+
 
     connectedRef.on("value", function(isOnline) {
       if (isOnline.val()) {
         // If we lose our internet connection, we want ourselves removed from the list.
         currentUser.onDisconnect().remove();
       }
+    });
+
+    beconUsers.on("child_added", function(snapshot) {
+      var user = snapshot.val();
+      if (currentUser.name() !== snapshot.name()){
+        items.push({id: snapshot.name(), name: user.name, message: user.note});
+      }
+      
     });
 
     var items = [
@@ -356,16 +369,28 @@
     };
 
     var setLocation = function(loc) {
-     currLocation = loc; 
+      currLocation = loc; 
+      geoQuery = geoFire.query({
+        center: [loc.coords.latitude, loc.coords.longitude],
+        radius: 10.0
+      });
     };
 
-    var setUser = function(nane, note) {
+    var setUser = function(name, note) {
       currentUser.set({
         name: name, 
         note: note,
-        location: currLocation.coords
+        location: currLocation ? [currLocation.coords.latitude, currLocation.coords.longitude] : null 
+      });
+      if(currLocation) geoBeacon.set(currentUser.name(), [currLocation.coords.latitude, currLocation.coords.longitude]);
+    };
+
+    var setNote = function(note) {
+      currentUser.set({
+        note: note,
       });
     };
+
 
     // Polymer stuffs 
     Polymer('friend-finder', {
