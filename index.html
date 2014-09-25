@@ -6,6 +6,7 @@
   <script src="rsvp.min.js"></script>
   <script src="https://cdn.firebase.com/js/client/1.0.24/firebase.js"></script>
   <script src="https://cdn.firebase.com/libs/geofire/3.0.2/geofire.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="components/platform/platform.js"></script>
   <link href="components/core-animated-pages/core-animated-pages.html" rel="import">
   <link href="components/core-header-panel/core-header-panel.html" rel="import">
@@ -124,13 +125,19 @@
 
       paper-fab {
         position: absolute;
-        bottom: 15px;
-        right: 15px;
         background: #e11d39;
         color: #fff;
       }
 
-      paper-fab.blue {
+      #set-user-prompt {
+        display: none;
+        left: 15px;
+        bottom: 15px;
+      }
+
+      #write-note-prompt {
+        right: 15px;
+        bottom: 15px;
         background: #5677fc;
       }
 
@@ -303,7 +310,8 @@
           </div>
         </core-header-panel>
 
-        <paper-fab icon="create" class="blue" onclick="toggleDialog('paper-dialog-transition-bottom')"></paper-fab>
+        <paper-fab id="write-note-prompt" icon="create" class="blue" onclick="toggleDialog('write-note')"></paper-fab>
+        <paper-fab id="set-user-prompt" icon="create" onclick="toggleDialog('set-user')"></paper-fab>
       </section>
 
       <section id="view-details">
@@ -412,24 +420,42 @@
     });
 
     getLocation();
+
+    window.addEventListener('polymer-ready', function(e) {
+      document.querySelector('paper-dialog[name=set-user]').toggle();
+    });
+    
   </script>
   </polymer-element>
 
   <friend-finder></friend-finder>
 
-  <paper-dialog autoCloseDisabled="true" transition="paper-dialog-transition-bottom" style="width: 100%; height: 100%">
+  <paper-dialog name="set-user" autoCloseDisabled="true" transition="paper-dialog-transition-bottom" style="width: 100%; height: 100%">
+    <p>Tell us who you are.</p>
+    <paper-input id="user-name-input" label="Your name"></paper-input>
+    <paper-button id="user-info-submit" icon="done" affirmative class="blue"></paper-button>
+  </paper-dialog>
+
+  <paper-dialog name="write-note" autoCloseDisabled="true" transition="paper-dialog-transition-bottom" style="width: 100%; height: 100%">
     <p>Write a short note to help your friends find you.</p>
-    <paper-input label="Standing near the speaker!"></paper-input>
+    <paper-input id="user-note-input" label="Standing near the speaker!"></paper-input>
     <paper-button icon="close" dismissive></paper-button>
-    <paper-button icon="send" affirmative class="blue"></paper-button>
+    <paper-button id="user-note-submit" icon="send" affirmative class="blue"></paper-button>
   </paper-dialog>
 
   <script>
-    function toggleDialog(transition) {
-      var dialog = document.querySelector('paper-dialog[transition=' + transition + ']');
+    function toggleDialog(name) {
+      var dialog = document.querySelector('paper-dialog[name=' + name + ']');
       dialog.toggle();
     }
+
+    $(document).on('click', '#user-info-submit', function() {
+      setUser($('#user-name-input')[0].inputValue, '');
+    });
+
+    $(document).on('click', '#user-note-submit', function() {
+      setNote($('#user-note-input')[0].inputValue);
+    });
   </script>
-  <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> -->
 </body>
 </html>
