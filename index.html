@@ -339,6 +339,7 @@
     var currentUser = beconUsers.push();
     var connectedRef = new Firebase("https://burning-torch-5648.firebaseio.com/.info/connected");
     var geoBeacon = new GeoFire(fireBeacon);
+    var geoRef; 
     var currLocation; 
     var geoQuery 
 
@@ -347,7 +348,6 @@
       if (isOnline.val()) {
         // If we lose our internet connection, we want ourselves removed from the list.
         currentUser.onDisconnect().remove();
-        geoBeacon.remove(currentUser.name())
       }
     });
 
@@ -395,10 +395,7 @@
 
     var setLocation = function(loc) {
       currLocation = loc; 
-      geoQuery = geoBeacon.query({
-        center: [loc.coords.latitude, loc.coords.longitude],
-        radius: 10.0
-      });
+      setupGeo(loc);
     };
 
     var setUser = function(name, note) {
@@ -407,7 +404,11 @@
         note: note,
         location: currLocation ? [currLocation.coords.latitude, currLocation.coords.longitude] : null 
       });
-      if(currLocation) geoBeacon.set(currentUser.name(), [currLocation.coords.latitude, currLocation.coords.longitude]);
+      if(currLocation) {
+        geoBeacon.set(currentUser.name(), [currLocation.coords.latitude, currLocation.coords.longitude]).then(function(){
+          fireBeacon.child(currentUser.name()).onDisconnect().remove();
+        });
+      }
     };
 
     var setNote = function(note) {
@@ -416,6 +417,16 @@
       });
     };
 
+    var setupGeo = function(loc){
+      geoQuery = geoBeacon.query({
+        center: [loc.coords.latitude, loc.coords.longitude],
+        radius: 10.0
+      });
+
+      var onKeyEnteredRegistration = geoQuery.on("key_entered", function(key, location, distance) {
+        console.log(key + " entered query at " + location + " (" + distance + " km from center)");
+      });
+    };
 
     // Polymer stuffs 
     Polymer('friend-finder', {
