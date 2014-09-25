@@ -15,6 +15,7 @@
   <link href="components/core-dropdown/core-dropdown.html" rel="import">
   <link href="components/core-overlay/core-overlay.html" rel="import">
   <link href="components/core-icons/core-icons.html" rel="import">
+  <link href="components/core-icons/communication-icons.html" rel="import">
   <link href="components/paper-tabs/paper-tabs.html" rel="import">
   <link href="components/paper-shadow/paper-shadow.html" rel="import">
   <link href="components/paper-button/paper-button.html" rel="import">
@@ -184,14 +185,6 @@
         margin: 0;
       }
 
-      #friends-map {
-        padding: 120px 0 0;
-        background: #ccc;
-        height: 130px;
-        text-align: center;
-        color: #aaa;
-      }
-
       #friends-list {
         margin: 12px 0 0;
         text-align: center;
@@ -218,13 +211,20 @@
         line-height: 1.5;
       }
 
+      .chip-bottom core-icon {
+        margin: 0 0 0 3px;
+        color: #999;
+      }
+
       .friend-mini-name {
+        margin: 2px 0 0;
         font-weight: 700;
       }
 
       .friend-mini-location {
         font-size: 13px;
         color: #777;
+        line-height: 25px;
       }
 
       .card {
@@ -294,21 +294,13 @@
             </paper-tabs>
           </core-toolbar>
 
-          <div id="friends-map">
-            <!-- Map goes here -->
-            Map
-          </div>
-
           <div id="friends-list" hero-p on-tap="{{transition}}">
             <template repeat="{{items as item}}">
               <div class="chip" hero-id="{{item.id}}" hero?="{{selectedFriend === item }}">
                 <div class="chip-top photo" style="background-image: url({{item.profile_image}});" hero-id="{{item.id}}-photo" hero?="{{selectedFriend === item}}"></div>
                 <div class="chip-bottom">
                   <div class="friend-mini-name">{{item.name}}</div>
-                  <div class="friend-mini-location">Last seen at {{item.last_seen_at}}</div>
-                  <template bind if="{{item.message}}">
-                    <core-icon src="chat.png"></core-icon>
-                  </template>
+                  <div class="friend-mini-location">{{item.last_seen_at}} <template bind if="{{item.message}}"><core-icon icon="communication:chat"></core-icon></template></div>
                 </div>
               </div>
             </template>
@@ -329,7 +321,7 @@
             <div layout horizontal center>
               <div flex>
                 <h1 class="friend-detail-name">{{selectedFriend.name}}</h1>
-                <h2 class="friend-detail-location">Last seen at {{selectedFriend.last_seen_at}} {{selectedFriend.last_seen_time}}</h2>
+                <h2 class="friend-detail-location">Last seen at: {{selectedFriend.last_seen_at}} {{selectedFriend.last_seen_time}}</h2>
                 <p class="friend-detail-message">"{{selectedFriend.message}}"</p>
                 <paper-button class="button-message" label="button">Send Message</paper-button>
               </div>
@@ -364,10 +356,10 @@
     // });
 
     var items = [
-        { id: 'nickvlku', name: 'Nick Vlku', last_seen_at: 'front bar', last_seen_time: '3 minutes ago', message: 'Waiting by the exit door', profile_image: 'http://i.imgur.com/Nepsevb.jpg' },
-        { id: 'akshaydodeja', name: 'Akshay Dodeja', last_seen_at: 'seat 25D', last_seen_time: '2 minutes ago', message: 'Seated and ready...', profile_image: 'http://i.imgur.com/REKhkoH.jpg' },
-        { id: 'jonkantro', name: 'Jon Kantrowitz', last_seen_at: 'east lobby', last_seen_time: '5 minutes ago', message: 'Standing next to the pole', profile_image: 'http://i.imgur.com/f9itLTh.jpg' },
-        { id: 'wesdonohoe', name: 'Wesley Donohoe', last_seen_at: 'mezzanine', last_seen_time: '2 minutes ago', message: 'Chilling by the window', profile_image: 'http://i.imgur.com/VhIh8ib.jpg' }
+        { id: 'nickvlku', name: 'Nick Vlku', last_seen_at: 'Front bar', last_seen_time: '3 minutes ago', message: 'Waiting by the exit door', profile_image: 'http://i.imgur.com/Nepsevb.jpg' },
+        { id: 'akshaydodeja', name: 'Akshay Dodeja', last_seen_at: 'Seat 25D', last_seen_time: '2 minutes ago', message: 'Seated and ready...', profile_image: 'http://i.imgur.com/REKhkoH.jpg' },
+        { id: 'jonkantro', name: 'Jon Kantrowitz', last_seen_at: 'East lobby', last_seen_time: '5 minutes ago', message: null, profile_image: 'http://i.imgur.com/f9itLTh.jpg' },
+        { id: 'wesdonohoe', name: 'Wesley Donohoe', last_seen_at: 'Mezzanine', last_seen_time: '2 minutes ago', message: 'Chilling by the window', profile_image: 'http://i.imgur.com/VhIh8ib.jpg' }
       ]; 
 
 
