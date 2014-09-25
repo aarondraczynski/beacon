@@ -352,6 +352,7 @@
       if (isOnline.val()) {
         // If we lose our internet connection, we want ourselves removed from the list.
         currentUser.onDisconnect().remove();
+        geoBeacon.remove(currentUser.name())
       }
     });
 
@@ -386,7 +387,7 @@
       var userId = snapshot.name();
       var user = snapshot.val();
       var index = items.map(function(e) { return e.id; }).indexOf(userId);
-      items[index].message = user.note;
+      if(index) items[index].message = user.note;
     });
 
     var getLocation = function () {
