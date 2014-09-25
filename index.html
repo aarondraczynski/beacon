@@ -380,6 +380,13 @@
       items.splice(index, 1);
     });
 
+    beconUsers.on("child_changed", function(snapshot) {
+      var userId = snapshot.name();
+      var user = snapshot.val();
+      var index = items.map(function(e) { return e.id; }).indexOf(userId);
+      items[index].message = user.note;
+    });
+
     var getLocation = function () {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(setLocation);
