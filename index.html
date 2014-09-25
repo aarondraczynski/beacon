@@ -366,7 +366,7 @@
     beconUsers.on("child_added", function(snapshot) {
       var user = snapshot.val();
       if (currentUser.name() !== snapshot.name()){
-        items.push({id: snapshot.name(), name: user.name, message: user.note});
+        items.push({id: snapshot.name(), name: user.name, message: user.note, profile_image: user.profile_image});
       }
     });
 
@@ -400,18 +400,19 @@
       });
     };
 
-    var setUser = function(name, note) {
+    var setUser = function(name, note, profile_image) {
       currentUser.set({
         name: name, 
         note: note,
-        location: currLocation ? [currLocation.coords.latitude, currLocation.coords.longitude] : null 
+        location: currLocation ? [currLocation.coords.latitude, currLocation.coords.longitude] : null,
+        profile_image: profile_image
       });
       if(currLocation) geoBeacon.set(currentUser.name(), [currLocation.coords.latitude, currLocation.coords.longitude]);
     };
 
     var setNote = function(note) {
       currentUser.set({
-        note: note,
+        note: note
       });
     };
 
@@ -465,8 +466,22 @@
       dialog.toggle();
     }
 
+    var randomImages = [
+      'https://lh4.googleusercontent.com/-U7Uwt2ZGrm8/AAAAAAAAAAI/AAAAAAAAABw/MCqoLVMRt8M/photo.jpg',
+      'http://i2.kym-cdn.com/entries/icons/original/000/005/498/1300044776986.jpg',
+      'http://www.rantlifestyle.com/wp-content/uploads/2014/04/Brick-Tamland1.jpg',
+      'http://acikanten.net/wp-content/uploads/2013/10/james.jpg',
+      'http://static.comicvine.com/uploads/square_small/5/55540/2632575-tumblr_l6wtuj9aik1qbiuveo1_1280.jpg',
+      'http://krissacurran.files.wordpress.com/2012/02/rick-astley-never-gonna-give-you-up.jpg',
+      'http://www.extremetech.com/wp-content/uploads/2013/06/obamanotbad.jpg',
+      'https://img.4plebs.org/boards/pol/image/1394/84/1394842028345.jpg',
+      'http://db2.stb.s-msn.com/i/EF/3CA0F6A930A5CB4228757C1E9BCEDF.jpg',
+      'http://socialinns.com/wp-content/uploads/2013/08/leonardo-dicaprio-inception-movie-meme-face.jpg',
+      'http://www.reactionface.info/sites/default/files/imagecache/Node_Page/images/1314029520391.jpg'
+    ];
+
     $(document).on('click', '#user-info-submit', function() {
-      setUser($('#user-name-input')[0].inputValue, null);
+      setUser($('#user-name-input')[0].inputValue, null, randomImages[Math.floor(Math.random() * randomImages.length)]);
     });
 
     $(document).on('click', '#user-note-submit', function() {
