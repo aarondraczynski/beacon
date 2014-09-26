@@ -380,7 +380,7 @@
       var userId = snapshot.name();
       var user = snapshot.val();
       var index = items.map(function(e) { return e.id; }).indexOf(userId);
-      if(index) items[index].message = user.note;
+      if(index >= 0) items[index].message = user.note;
     });
 
     var getLocation = function () {
@@ -411,7 +411,7 @@
     };
 
     var setNote = function(note) {
-      currentUser.set({
+      currentUser.update({
         note: note
       });
     };
